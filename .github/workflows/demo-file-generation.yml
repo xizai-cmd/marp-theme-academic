@@ -4,6 +4,12 @@ on:
   push:
     branches: [ main ]
 
+# 个人账号新建仓库的 GITHUB_TOKEN 默认只有 contents: read，
+# 最后一步要 git push，必须在这里显式提权，否则报
+# "remote: Write access to repository not granted." 403。
+permissions:
+  contents: write
+
 jobs:
   build:
 
