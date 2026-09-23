@@ -8,6 +8,13 @@
   --color-background: #fff;
   --color-foreground: #333;
   --color-highlight: #800000;
+
+  /* 内容框（引用块）与表格共用的一套配色，改这里会同时影响两者 */
+  --box-border-color: #800000;
+  --box-title-bg: #ecd9d9;
+  --box-title-fg: #800000;
+  --box-body-bg: #faf5f5;
+  --box-radius: 6px;
 }
 
 section {
@@ -74,15 +81,15 @@ header {
   font-weight: 700;
 }
 
-/* 引用块 = Beamer 式内容块；配色由主题色 #800000 派生 */
+/* 引用块 = Beamer 式内容块；配色取自 :root 里的 --box-* */
 blockquote {
-  --block-border-color: #800000;
-  --block-title-bg: #ecd9d9;
-  --block-title-fg: #800000;
-  --block-body-bg: #faf5f5;
+  --block-border-color: var(--box-border-color);
+  --block-title-bg: var(--box-title-bg);
+  --block-title-fg: var(--box-title-fg);
+  --block-body-bg: var(--box-body-bg);
   --block-inset: 0.7em;
   --block-title-gap: 0.35em;
-  --block-radius: 6px;
+  --block-radius: var(--box-radius);
 
   position: static;      /* 清掉脚注遗留的绝对定位 */
   max-width: none;
@@ -123,6 +130,73 @@ blockquote > h6:first-child {
    否则外边距折叠会取两者较大值，标题栏与正文第一行之间会空出一整行。 */
 blockquote > h6:first-child + * {
   margin-top: 0;
+}
+
+/* ---------------------------------------------------------------------------
+ * 表格配色：与内容框同一套（表头 = 标题栏，单元格 = 内容区）
+ *
+ * - 外框沿用内容框的 1px 深红 + 圆角；表头用标题栏的浅红底 + 深红粗体。
+ * - 内部格线比外框浅，避免整张表变成「网格墙」。
+ * - Gaia 默认的斑马纹是蓝灰 rgba(69,90,100,.1)，这里换成同色系的淡红。
+ * ------------------------------------------------------------------------ */
+
+section table {
+  /* collapse 模式下 border-radius 不生效，必须 separate + 零间距 */
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--box-border-color);
+  border-radius: var(--box-radius);
+  background: var(--box-body-bg);
+}
+
+/* 表头 = 内容框的标题栏 */
+section table thead th {
+  background: var(--box-title-bg);
+  color: var(--box-title-fg);
+  font-weight: 700;
+}
+
+/* 内部格线：清掉 Gaia 给每格上的深色 1px 边框，只留右下两条浅线 */
+section table th,
+section table td {
+  border: 0;
+  border-right: 1px solid rgba(128, 0, 0, 0.22);
+  border-bottom: 1px solid rgba(128, 0, 0, 0.22);
+}
+/* 最后一列不要右边线，否则会和表格外框叠成 2px */
+section table tr > *:last-child {
+  border-right: 0;
+}
+/* 最后一行同理去掉下边线。必须锚定「最后一个行组」：直接写 tr:last-child
+   会连 thead 里那唯一一行也匹配上，把表头下沿的线一起删掉。 */
+section table > *:last-child > tr:last-child > th,
+section table > *:last-child > tr:last-child > td {
+  border-bottom: 0;
+}
+
+/* 圆角交给四个角上的单元格，与内容框内圆角一致（同样要按行组锚定） */
+section table > *:first-child > tr:first-child > *:first-child {
+  border-top-left-radius: calc(var(--box-radius) - 1px);
+}
+section table > *:first-child > tr:first-child > *:last-child {
+  border-top-right-radius: calc(var(--box-radius) - 1px);
+}
+section table > *:last-child > tr:last-child > *:first-child {
+  border-bottom-left-radius: calc(var(--box-radius) - 1px);
+}
+section table > *:last-child > tr:last-child > *:last-child {
+  border-bottom-right-radius: calc(var(--box-radius) - 1px);
+}
+
+/* 斑马纹：跳过紧跟表头的第一行，让内容第一行保持浅色——表头已经是那条深色带。
+   注意必须显式压掉 Gaia 默认的蓝灰斑马纹，它正好落在奇数行（也就是第一行）上。 */
+section table tbody > tr:nth-child(odd) td,
+section table tbody > tr:nth-child(odd) th {
+  background: transparent;
+}
+section table tbody > tr:nth-child(even) td,
+section table tbody > tr:nth-child(even) th {
+  background: rgba(128, 0, 0, 0.04);
 }
 
 img[alt~="center"] {
