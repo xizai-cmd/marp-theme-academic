@@ -7,45 +7,54 @@ math: katex
 
 <!-- _class: lead -->
 
-# Marpで研究室の発表スライドを作る
+# 用 Marp 制作研究室汇报幻灯片
 
-#### 〜Beamerを卒業しよう〜
+#### ～告别 Beamer～
 
 <br>
 
-**著者 太郎**
-ほげほげ研究室 M2
+**作者 太郎**
+某某研究室 M2
 YYYY/MM/DD
 
 ---
 
-<!-- _header: 目次 -->
+<!-- _header: 目录 -->
 
-1. はじめに
-1. コードブロック
-1. 数式
-1. 図
-
----
-
-<!-- _header: はじめに -->
-
-- Marp とは **Markdown** で**スライド**を作成するためのソフトウェアである。
-  - 基本的な Markdown のシンタックスがサポートされている。
-- Markdown 上で `---` という区切り線を入れるだけで、次のページに移動することができる。$^1$
-
-> 1: Marp は CommonMark という Markdown の仕様に沿って開発されているため、CommonMark に含まれていない「脚注」の文法（`[^1]` を使うもの）が提供されていない。そこで、https://github.com/marp-team/marp/discussions/150#discussioncomment-1302384 を参照して擬似的に脚注を実現した。
+1. 简介
+1. 内容块
+1. 代码块
+1. 数学公式
+1. 图片
 
 ---
 
-<!-- _header: コードブロック -->
+<!-- _header: 简介 -->
+
+- Marp 是一款用 **Markdown** 制作**幻灯片**的软件。
+  - 支持基本的 Markdown 语法。
+- 在 Markdown 中只需插入 `---` 这样的分隔线，就能切换到下一页。
+
+---
+
+<!-- _header: 内容块 -->
+
+> ###### 定义
+>
+> 把引用块的第一行写成六级标题 `######`，就会生成像这样的标题栏。
+
+> 第一行不是六级标题时，就是一个没有标题栏的内容块。
+
+---
+
+<!-- _header: 代码块 -->
 
 ```python
 import torch
 print(torch.cuda.is_available())
 ```
 
-こんな感じでコードブロックを書くことができる。
+像这样就能编写代码块。
 
 ```python
 from transformers import AutoModelForMaskedLM, AutoTokenizer
@@ -57,11 +66,11 @@ outputs = model(**inputs)
 tokenizer.convert_ids_to_tokens(outputs.logits[0][1:-1].argmax(axis=-1))
 ```
 
-横幅は自動調整される（ドキュメントの[Auto-scaling](https://github.com/marp-team/marp-core#auto-scaling-features)を参照）。
+宽度会自动调整（参见文档的 [Auto-scaling](https://github.com/marp-team/marp-core#auto-scaling-features)）。
 
 ---
 
-<!-- _header: 数式 -->
+<!-- _header: 数学公式 -->
 
 $$ I_{xx}=\int\int_Ry^2f(x,y)\cdot{}dydx $$
 
@@ -71,14 +80,14 @@ f(x) = \int_{-\infty}^\infty
     \,d\xi
 $$
 
-こんな感じで数式を書くことができる。もちろんインラインの $\LaTeX$ も使える。  
-ついでに絵文字も使える:smile:
+像这样就能编写数学公式。当然也可以使用行内的 $\LaTeX$。  
+顺便一提，还能使用 emoji:smile:
 
 ---
 
-<!-- _header: 図 -->
+<!-- _header: 图片 -->
 
-1. まず[このいらすとやのリンク](https://www.irasutoya.com/2018/10/blog-post_723.html)から画像（`kenkyu_woman_seikou.png`）を右クリックでダウンロードしてください。
-2. この Markdown のあるディレクトリの中に `images` という名前のディレクトリを作り、先ほどダウンロードした画像を配置してください。これで準備が整いました。
+1. 首先从[这个 Irasutoya 链接](https://www.irasutoya.com/2018/10/blog-post_723.html)右键下载图片（`kenkyu_woman_seikou.png`）。
+2. 在此 Markdown 文件所在的目录中新建一个名为 `images` 的目录，并把刚才下载的图片放进去。这样准备工作就完成了。
 
 ![w:300 center](./images/kenkyu_woman_seikou.png)

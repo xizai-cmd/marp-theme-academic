@@ -1,7 +1,7 @@
 /* @theme academic */
 
 @import 'gaia';
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
 
 :root {
@@ -12,7 +12,7 @@
 
 section {
   background-image: none;
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Noto Sans SC', sans-serif;
   padding-top: 90px;
   padding-left: 40px;
   padding-right: 40px;
@@ -74,18 +74,55 @@ header {
   font-weight: 700;
 }
 
+/* 引用块 = Beamer 式内容块；配色由主题色 #800000 派生 */
 blockquote {
-  max-width: 90%;
-  border-top: 0.1em dashed #555;
-  font-size: 60%;
-  position: absolute;
-  bottom: 20px;
+  --block-border-color: #800000;
+  --block-title-bg: #ecd9d9;
+  --block-title-fg: #800000;
+  --block-body-bg: #faf5f5;
+  --block-inset: 0.7em;
+  --block-title-gap: 0.35em;
+  --block-radius: 6px;
+
+  position: static;      /* 清掉脚注遗留的绝对定位 */
+  max-width: none;
+  font-size: 1em;        /* 清掉脚注遗留的 60% */
+  margin: 1em 0 0;
+  padding: var(--block-inset);
+  background: var(--block-body-bg);
+  border: 1px solid var(--block-border-color);
+  border-radius: var(--block-radius);
+  text-align: left;
 }
-blockquote::before {
-  content: "";
-}
+
+blockquote::before,
 blockquote::after {
-  content: "";
+  content: "";           /* 关掉 Gaia 的装饰引号 */
+}
+
+/* 标题栏：仅当引用块第一行是六级标题 */
+blockquote > h6:first-child {
+  /* 外扩的量正好等于容器内边距：标题栏贴到边框内缘，1px 边框仍然可见。
+     不要再加上边框宽度，否则标题栏会盖住边框。 */
+  margin: calc(-1 * var(--block-inset))
+          calc(-1 * var(--block-inset))
+          var(--block-title-gap);
+  padding: 0.35em var(--block-inset);
+  background: var(--block-title-bg);
+  color: var(--block-title-fg);
+  border-radius: calc(var(--block-radius) - 1px)
+                 calc(var(--block-radius) - 1px) 0 0;
+  /* 与容器同字号：--block-inset 是 em，字号不同会让标题栏缩进对不上内缘 */
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* 紧跟标题栏的内容：吃掉它自身的上外边距（如 p 的 1em）。
+   否则外边距折叠会取两者较大值，标题栏与正文第一行之间会空出一整行。 */
+blockquote > h6:first-child + * {
+  margin-top: 0;
 }
 
 img[alt~="center"] {
@@ -95,4 +132,142 @@ img[alt~="center"] {
 
 code {
   font-family: 'Source Code Pro', monospace;
+}
+
+/* ---------------------------------------------------------------------------
+ * 代码配色：Xcode
+ *
+ * - token 颜色取自 highlight.js 官方 xcode.css
+ *   （XCode style (c) Angel Garcia，色值即 Xcode 默认主题）。
+ * - xcode.css 自身给的是 background:#fff + color:black，也就是 Xcode 的白底编辑器；
+ *   纯白块在白色幻灯片上只剩一圈描边，故改用中性浅灰 #f5f5f5 + #d5d5d5，
+ *   保留「一块代码」的辨识度。想还原纯白编辑器外观，把这两行改成 #fff / #d0d0d0 即可。
+ * - 注意：Gaia 把代码块底色绑在 --color-foreground、字色绑在 --color-background，
+ *   所以这里必须直接覆盖，不要去改那两个变量（它们同时控制正文和页面底色）。
+ * ------------------------------------------------------------------------ */
+
+/* 行内代码：中性浅灰 chip（Xcode 无行内代码样式，用无彩色以免和语法色打架） */
+section code {
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+}
+
+/* 代码块容器 */
+section :is(pre, marp-pre) {
+  background: #f5f5f5;
+  border: 1px solid #d5d5d5;
+  border-radius: 6px;
+}
+
+/* 代码块正文：覆盖上面行内代码的底色与字色（xcode.css 的 .hljs{color:black}） */
+section :is(pre, marp-pre) > code {
+  background: transparent;
+  color: #000;
+}
+
+/* --- Xcode token 配色 --- */
+.hljs-comment,
+.hljs-quote {
+  color: #007400;
+}
+
+.hljs-tag,
+.hljs-attribute,
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-name {
+  color: #aa0d91;
+}
+
+.hljs-variable,
+.hljs-template-variable {
+  color: #3f6e74;
+}
+
+.hljs-code,
+.hljs-string,
+.hljs-meta .hljs-string {
+  color: #c41a16;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #0e0eff;
+}
+
+.hljs-title,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-number {
+  color: #1c00cf;
+}
+
+.hljs-section,
+.hljs-meta {
+  color: #643820;
+}
+
+.hljs-title.class_,
+.hljs-class .hljs-title,
+.hljs-type,
+.hljs-built_in,
+.hljs-params {
+  color: #5c2699;
+}
+
+.hljs-attr {
+  color: #836c28;
+}
+
+.hljs-subst {
+  color: #000;
+}
+
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #9b703f;
+}
+
+.hljs-doctag,
+.hljs-strong {
+  font-weight: 700;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-formula {
+  background-color: #eee;
+  font-style: italic;
+}
+
+.hljs-addition {
+  background-color: #baeeba;
+}
+
+.hljs-deletion {
+  background-color: #ffc8bd;
+}
+
+/* --- 清掉 Gaia(Sunburst) 残留 ---
+ * xcode.css 有几处只设了 background / font-weight，没覆盖 Gaia 设过的属性，
+ * 不清掉会残留 Sunburst 的近白色字（浅底上等于看不见）以及下划线和斜体。
+ */
+.hljs-addition,
+.hljs-deletion,
+.hljs-formula {
+  color: inherit;
+}
+
+.hljs-comment,
+.hljs-quote {
+  font-style: normal;
+}
+
+.hljs-doctag,
+.hljs-title.class_,
+.hljs-class .hljs-title {
+  text-decoration: none;
 }
